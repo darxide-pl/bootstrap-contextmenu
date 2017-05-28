@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script
+	  src="https://code.jquery.com/jquery-2.2.4.min.js"
+	  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+	  crossorigin="anonymous"></script>	
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">	
+	<script src="bootstrap-contextmenu.js"></script>
+	<link rel="stylesheet" type="text/css" href="bootstrap-contextmenu.css">	
+	<title></title>
+</head>
+<body>
+
+<div class="container">
+	<h1 class="text-center">Bootstrap contextmenu</h1>
+	<div class="jumbotron text-center">
+		<p>Extra lightweight plugin (4kB) for dynamically creating complex context menus in bootstrap3</p>
+	</div>
+	<div>
+		<h2 class="page-header">1. Requirements</h2>
+		<ul>
+			<li>Bootstrap (currently supported bootstrap 3)</li>
+			<li>Jquery</li>
+		</ul>
+<pre>&lt;script src="https://code.jquery.com/jquery-2.2.4.min.js"
+&lt;script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"&gt;
+</pre>		
+... and include plugin:
+<pre>
+&lt;script src="bootstrap-contextmenu.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="bootstrap-contextmenu.css"&gt;		
+</pre>
+	</div>
+
+<h2 class="page-header">2. Examples</h2>
+
+
+<h4>2.1 Simple example</h4>
+<div class="list-group menu1">
+	<div class="list-group-item">Right click on me</div>
+	<div class="list-group-item">Right click on me</div>		
+</div>
+
+<script type="text/javascript">
+const menu1 = Object.create(contextMenu)
+menu1.init('.menu1 .list-group-item' , [
+		{
+			type : 'header',
+			text : 'header in context menu',
+		}, 
+		{
+			type : 'item', 
+			text : 'hello'
+		}, 
+		{
+			type : 'item', 
+			text : 'world'
+		},
+		{
+			type : 'divider'
+		}, 
+		{
+			type : 'item', 
+			text : 'other item under divider'
+		}
+	])
+</script>
+<pre>
+&#x3C;div class=&#x22;list-group menu1&#x22;&#x3E;
+&#x9;&#x3C;div class=&#x22;list-group-item&#x22;&#x3E;Right click on me&#x3C;/div&#x3E;
+&#x9;&#x3C;div class=&#x22;list-group-item&#x22;&#x3E;Right click on me&#x3C;/div&#x3E;&#x9;&#x9;
+&#x3C;/div&#x3E;
+
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menu = Object.create(contextMenu)
+menu.init(&#x27;.menu1 .list-group-item&#x27; , [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;header&#x27;,
+&#x9;&#x9;&#x9;text : &#x27;header in context menu&#x27;,
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;hello&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;world&#x27;
+&#x9;&#x9;},
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;divider&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;other item under divider&#x27;
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;	
+</pre>
+<br>
+
+<h4>2.2 Complex example with callbacks and nested menus</h4>
+<p>
+	If you wanna display other options conditionally to clicked item (for example based on data-attributes or id), You can use callbacks in options:
+</p>
+<div class="list-group menu2">
+	<div class="list-group-item" data-id="1">Right click on me</div>
+	<div class="list-group-item" data-id="2">Right click on me</div>		
+</div>
+
+<script type="text/javascript">
+const menu2 = Object.create(contextMenu)
+menu2.init('.menu2 .list-group-item' , [
+		{
+			type : 'item', 
+			text : function(e) {
+				let element = $(e.currentTarget)
+				return 'This item has data-id="'+element.data('id')+'"'
+			},
+		}, 
+		{
+			type : 'item', 
+			text : function(e) {
+				let element = $(e.currentTarget) 
+				if(element.data('id') == 1) {
+					return 'I am active!'
+				} 
+
+				return 'I am not active'
+			}, 
+			href : 'http://www.google.pl',
+			attr : {
+				class : function(e) {
+					let element = $(e.currentTarget) 
+					if(element.data('id') == 1) {
+						return 'active'
+					}
+				}
+			}
+		}, 
+		{
+			type : 'item',
+			text : 'this item should be visible only if target element has data-id = 2',
+			display : function(e) {
+				let element = $(e.currentTarget)
+				if(element.data('id') == 2) {
+					return true
+				}
+				return false
+			}
+		}, 
+		{
+			type : 'submenu', 
+			text : 'submenu example',
+			items : [
+				{
+					type : 'item', 
+					text : 'submenu item 1',
+				}, 
+				{
+					type : 'item', 
+					text : function() {
+						return 'random number '+ Math.ceil(Math.random()*1000)
+					}
+				}, 
+				{
+					type : 'submenu', 
+					text : 'next level submenu',
+					items : [
+						{
+							type : 'item', 
+							text : 'subsubmenu item 1',
+						}, 
+						{
+							type : 'item', 
+							text : function() {
+								return 'random number '+ Math.ceil(Math.random()*1000)
+							}
+						}, 
+					]
+				}
+			]
+		}
+	])
+</script>
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menu2 = Object.create(contextMenu)
+menu2.init(&#x27;.menu2 .list-group-item&#x27; , [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget)
+&#x9;&#x9;&#x9;&#x9;return &#x27;This item has data-id=&#x22;&#x27;+element.data(&#x27;id&#x27;)+&#x27;&#x22;&#x27;
+&#x9;&#x9;&#x9;},
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget) 
+&#x9;&#x9;&#x9;&#x9;if(element.data(&#x27;id&#x27;) == 1) {
+&#x9;&#x9;&#x9;&#x9;&#x9;return &#x27;I am active!&#x27;
+&#x9;&#x9;&#x9;&#x9;} 
+
+&#x9;&#x9;&#x9;&#x9;return &#x27;I am not active&#x27;
+&#x9;&#x9;&#x9;}, 
+&#x9;&#x9;&#x9;href : &#x27;http://www.google.pl&#x27;,
+&#x9;&#x9;&#x9;attr : {
+&#x9;&#x9;&#x9;&#x9;class : function(e) {
+&#x9;&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget) 
+&#x9;&#x9;&#x9;&#x9;&#x9;if(element.data(&#x27;id&#x27;) == 1) {
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return &#x27;active&#x27;
+&#x9;&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;,
+&#x9;&#x9;&#x9;text : &#x27;this item should be visible only if target element has data-id = 2&#x27;,
+&#x9;&#x9;&#x9;display : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget)
+&#x9;&#x9;&#x9;&#x9;if(element.data(&#x27;id&#x27;) == 2) {
+&#x9;&#x9;&#x9;&#x9;&#x9;return true
+&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;&#x9;return false
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;submenu&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;submenu example&#x27;,
+&#x9;&#x9;&#x9;items : [
+&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;text : &#x27;submenu item 1&#x27;,
+&#x9;&#x9;&#x9;&#x9;}, 
+&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;text : function() {
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return &#x27;random number &#x27;+ Math.ceil(Math.random()*1000)
+&#x9;&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;&#x9;}, 
+&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;type : &#x27;submenu&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;text : &#x27;next level submenu&#x27;,
+&#x9;&#x9;&#x9;&#x9;&#x9;items : [
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text : &#x27;subsubmenu item 1&#x27;,
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}, 
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text : function() {
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return &#x27;random number &#x27;+ Math.ceil(Math.random()*1000)
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}, 
+&#x9;&#x9;&#x9;&#x9;&#x9;]
+&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;]
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;
+</pre>
+
+<h2 class="page-header">3. Initialization</h2>
+<p>
+	Initialization requires 2 steps:<br>
+	Create object from <code>contextMenu</code> object, and call <code>init()</code> function, which has two parameters:
+	<code>selector</code> and <a href="#items"><code>items</code></a><br><br>
+	<code>selector</code> <i>string</i> - any selector compatible with loaded version of jquery<br>
+	<a href="#options"><code>options</code></a> <i>array</i> - array of options determines how to render context menu
+</p>
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, options)
+&#x3C;/script&#x3E;	
+</pre>
+
+<h2 id="options" class="page-header">4. Options</h2>
+
+<h4>4.1 Type</h4>
+<code>type</code> <i>string</i> - determines type of bootstrap dropdown element. Available values: <code>item</code>, <code>header</code>, <code>divider</code>, <code>submenu (recursive)</code> 
+<h5>Example:</h5>
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;header&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;menu header&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;,
+&#x9;&#x9;&#x9;text : &#x27;menu item&#x27;
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;	
+</pre><br>
+
+<h4>4.2 Text</h4>
+<code>text</code> <i>string|callback</i> - text displayed inside HTML <code>&lt;a&gt;</code> tag.
+You can also inject HTML here if you wanna display icon or someyhing else.
+<h5>Example:</h5>
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;Some text here&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;,
+&#x9;&#x9;&#x9;text : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget)
+&#x9;&#x9;&#x9;&#x9;return element.text()
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;	
+</pre><br>
+
+<h4>4.3 Display</h4>
+<code>display</code> <i>boolean|callback</i> default <i>true</i> - if you wanna dynamically decide which element should have some extra options, or display other options based on some conditions, You can use this option as callback.
+<h5>Example</h5>
+
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;Some text here&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;,
+&#x9;&#x9;&#x9;text : &#x27;extra option&#x27;, 
+&#x9;&#x9;&#x9;display : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget)
+&#x9;&#x9;&#x9;&#x9;if(element.hasClass(&#x27;super-extra-element&#x27;) === true) {
+&#x9;&#x9;&#x9;&#x9;&#x9;return true
+&#x9;&#x9;&#x9;&#x9;}
+
+&#x9;&#x9;&#x9;&#x9;return false
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;
+</pre><br>
+
+<h4>4.4 Html</h4>
+<code>html</code> <i>string|callback</i> - If you want render <code>&lt;li&gt;</code> element by yourself - You can use this option 
+<div class="alert alert-info">
+	<strong>Notice:</strong><br>
+	1. This option is available only when You declared <code>type</code> as 'item'<br>
+	2. All other options will be ignored
+</div>
+<h5>Example:</h5>
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;html : &#x27;&#x3C;li&#x3E;&#x3C;a&#x3E;menu item&#x3C;/a&#x3E;&#x3C;/li&#x3E;&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;html : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget)
+&#x9;&#x9;&#x9;&#x9;return &#x27;&#x3C;li&#x3E;&#x3C;a&#x3E;&#x27;+element.text()+&#x27;&#x3C;/a&#x3E;&#x3C;/li&#x3E;&#x27;
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;	
+</pre><br>
+
+<h4>4.5 Href</h4>
+<code>href</code> <i>string|callback</i> default: <code>javascript:void(0)</code> - value of href property inside link
+<h5>Example:</h5>
+
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;link to google&#x27;,
+&#x9;&#x9;&#x9;href : &#x27;http://www.google.pl&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;open selected file&#x27;, 
+&#x9;&#x9;&#x9;href : function(e) {
+&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget) 
+&#x9;&#x9;&#x9;&#x9;return &#x27;/files/preview/&#x27;+element.data(&#x27;id&#x27;)
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;	
+</pre><br>
+
+<h4>4.6 Attr</h4>
+<code>attr</code> <i>object</i> - list of attributes (eg. 'class', 'id', 'title', ...) which should be rendered inside <code>&lt;li&gt;</code> tag. Each of attribute can be string or callback.
+<h5>Example:</h5>
+
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;hello world&#x27;,
+&#x9;&#x9;&#x9;attr : {
+&#x9;&#x9;&#x9;&#x9;title : &#x27;some helper text&#x27;,
+&#x9;&#x9;&#x9;&#x9;class : &#x27;active&#x27;
+&#x9;&#x9;&#x9;}
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;attributes as callbacks&#x27;,
+&#x9;&#x9;&#x9;attr : {
+&#x9;&#x9;&#x9;&#x9;class : function(e) {
+&#x9;&#x9;&#x9;&#x9;&#x9;let element = $(e.currentTarget)
+&#x9;&#x9;&#x9;&#x9;&#x9;if(element.data(&#x27;my_data&#x27;) == &#x27;super&#x27;) {
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;return &#x27;active&#x27;
+&#x9;&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;} 
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;
+	
+</pre>
+
+<h2 class="page-header">5. Submenu</h2>
+<code>submenu</code> is recursice extra type of <code>item</code> - You can add large amount of submenus, but remember: More items, menu is less readable, and less handy - this is context menu - You should place here only most common options.<br><br>
+<h5>Example:</h5>
+
+<pre>
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+const menuObject = Object.create(contextMenu)
+menuObject.init(selector, [
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;typical item&#x27;
+&#x9;&#x9;}, 
+&#x9;&#x9;{
+&#x9;&#x9;&#x9;type : &#x27;submenu&#x27;, 
+&#x9;&#x9;&#x9;text : &#x27;submenu example&#x27;,
+&#x9;&#x9;&#x9;items : [
+&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x27;type&#x27; : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x27;text&#x27; : &#x27;submenu item 1&#x27;
+&#x9;&#x9;&#x9;&#x9;},
+&#x9;&#x9;&#x9;&#x9;{
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x27;type&#x27; : &#x27;item&#x27;, 
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x27;text&#x27; : &#x27;submenu item 2&#x27;
+&#x9;&#x9;&#x9;&#x9;},
+&#x9;&#x9;&#x9;]
+&#x9;&#x9;}
+&#x9;])
+&#x3C;/script&#x3E;
+</pre>
+
+<div style="height: 100px"></div>
+</div>
+</body>
+</html>
