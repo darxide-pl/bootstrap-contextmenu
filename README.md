@@ -57,6 +57,11 @@ menu.init('.menu1 .list-group-item' , [
 # Complex example with callbacks and some submenus 
 
 ```
+<div class="list-group menu2">
+	<div class="list-group-item" data-id="1">Right click on me</div>
+	<div class="list-group-item" data-id="2">Right click on me</div>		
+</div>
+
 <script type="text/javascript">
 const menu2 = Object.create(contextMenu)
 menu2.init('.menu2 .list-group-item' , [
