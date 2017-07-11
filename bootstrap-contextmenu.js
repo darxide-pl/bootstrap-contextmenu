@@ -2,15 +2,35 @@ const contextMenu = {
 
 	init : function(selector , options) {
 		$(document).on("contextmenu", selector, function(e) {
+
 			$('.context-widget').remove()
 			e.stopImmediatePropagation()
+
 			if(contextMenu.builder(selector, options, e)) {			
+
 				$('.context-widget').css({
 					display: "block",
 					left: e.pageX,
 					top: e.pageY, 
 					position : 'absolute'
 				});
+
+				let w = $('.context-widget .dropdown-menu').outerWidth()
+				if(e.pageX + w > $(window).width()) {
+					$('.context-widget').css({
+						left : 'auto', 
+						right : (w+2) +'px'
+					})
+				}
+
+				let h = $('.context-widget .dropdown-menu').outerHeight()
+				if(e.pageY + h > $(window).height()) {
+					$('.context-widget').css({
+						top : 'auto', 
+						bottom : (h+2) +'px'
+					})
+				}
+
 				return false;
 			}
 		});
